@@ -1,0 +1,166 @@
+\documentclass[10pt,letterpaper,titlepage]{report}
+\usepackage[utf8x]{inputenc}
+\usepackage{ucs}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{draftcopy}
+\setcounter{tocdepth}{4}
+\author{
+	Phos $<$phosphos0@gmail.com$>$ \\
+	Tristor $<$tristor@gmail.com$>$
+}
+\title{
+	PTEP 1 - Site Tracker Integration Protocol \\
+	Version 1
+}
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\chapter{Introduction}
+
+\section{Definitions}
+
+\paragraph{Site}
+
+The front end comprising the majority of manual user interaction will hereby be known as the ``Site''.
+
+\paragraph{Tracker}
+
+The software that handles ANNOUNCE and SCRAPE requests from BitTorrent clients will hereby be known as the ``Tracker''.
+
+\paragraph{Resource}
+
+A \textit{Uniform Resource Location} (URL) available on the \textit{Site} will hereby be known as a ``Resource''.
+
+\chapter{Data Format}
+\label{chap:dataformat}
+
+All data sent and returned should be encoded using JavaScript Object Notation (JSON).
+
+\section{Object Field Prefixes}
+
+Many instances where data needs to be changed on the Site by the Tracker, it does not need to be fully replaced, but modified based on it's current value. This is solved by Object Field Prefixes. Fields in an object are prefixed with one of the following prefixes if they are to be updated, not replaced.
+
+Object field prefixes are to be contained within two dollar signs, one on either side of the prefix (e.g.\ \$$+$\$).
+
+\subsection{Addition Prefix}
+
+The addition prefix is defined as ``\$$+$\$''.
+
+\subsubsection{Numeric Fields}
+
+On numeric fields, the addition prefix indicates that the value of the field should be added with the value currently within the database, and stored.
+
+\subsubsection{Arrays and Strings}
+
+On array or string fields, the addition prefix indicates that the value of the field should be concatenated to the end of the value currently within the database, and stored.
+
+\section{Request and Response}
+
+\subsection{Status Code}
+
+The root object returned should always contain a ``status'' key, containing an error value. Error values are described in the following table.
+
+\paragraph{Rationale for not Using HTTP Status Codes}
+
+HTTP status codes do not provide a granular description of actions taken, data returned or errors incurred.
+
+\begin{center}
+	\begin{tabular}{| r | p{8cm} |}
+		\hline
+		\textbf{Error Code} & \textbf{Description} \\ \hline
+			
+		000 & Success. \\ \hline
+		001 & Success, no changes made. \\ \hline
+		002 & Success, no data returned. \\ \hline
+		003 & Success, single object returned. \\ \hline
+		004 & Success, multiple objects returned. \\ \hline
+		100 & Invalid data format. \\ \hline
+		101 & Invalid data field. \\ \hline
+		102 & Invalid data type for field. \\ \hline
+		103 & Invalid data length for field. \\ \hline
+		200 & Unknown server error. \\ \hline
+		201 & Temporary server error. Retry in several seconds. \\ \hline
+		202 & Long-term server error. Retry in several minutes. \\ \hline
+		203 & Permanent server error. Retry once every 15 minutes and refuse connections until request successful. \\ \hline
+		9xx & Error codes 900 to 999 are reserved for custom error codes. \\ \hline
+	\end{tabular}
+\end{center}
+
+\subsection{Data Retrieval}
+
+\subsubsection{Object Data Retrieval}
+
+Single objects returned from the site to the tracker should consist of only the returned object, contained in the value for the ``object'' key of the root object.
+
+\subsubsection{Multiple Object Data Retrieval}
+
+Multiple objects returned from the site should be contained within an array in the value of the ``objects'' key of the root object.
+
+\subsection{Data Submission}
+
+\subsubsection{Single Object Data Submission}
+
+Single objects submitted to the site should be contained within the ``object'' key of the root object.
+
+\subsubsection{Multiple Object Data Submission}
+
+Multiple objects submitted to the site should be contained within an array in the ``objects'' key of the root object.
+
+\chapter{Site Resources}
+
+\section{Overview}
+
+The Site Resources chapter contains detailed descriptions of the Resources provided by the Site.
+
+This is version 1 of the Site Tracker Integration Protocol, so all Resources will be prefixed with ``/api/v1''.
+
+\section{Format}
+
+\subsection{Data sent from Tracker to Site}
+
+\subsubsection{Information Updates}
+
+Data sent from the Tracker to the Site will be stored in HTTP parameters respective to the HTTP method used.
+
+\subsubsection{Model Updates}
+
+Data designed to update a model will be sent over a HTTP POST as defined in \S\ref{chap:dataformat}.
+
+\subsection{Data returned to Tracker from Site}
+
+Data returned to the Tracker from the Site will be formatted as defined in \S\ref{chap:dataformat}.
+
+\section{Resources}
+
+\subsection{/api/v1/users}
+
+Fetch a list of users.
+
+\subsubsection{GET}
+
+\paragraph{Request Parameters}
+
+If no parameters are given, all users must be returned. \\
+
+\begin{tabular}{| r | p{5cm} |}
+	\hline
+	
+	\textbf{Parameter} & \textbf{Description} \\ \hline
+	
+	last\_updated\_after & When this parameter is passed, only users updated after the given UNIX timestamp in UTC should be returned. \\ \hline
+	
+	limit & When this parameter is passed, only the first \textit{value} users should be returned. No order is guaranteed.  \\ \hline
+	
+	skip & When this parameter is passed, the first \textit{value} users should be ignored, returning only users following the first \textit{value} users. No order is guaranteed. \\ \hline
+\end{tabular}
+
+\subsubsection{POST}
+
+Bulk-update users.
+
+\end{document}
