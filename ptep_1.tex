@@ -111,6 +111,51 @@ Single objects submitted to the site should be contained within the ``object'' k
 
 Multiple objects submitted to the site should be contained within an array in the ``objects'' key of the root object.
 
+\chapter{Data Object Types}
+
+\section{Base}
+
+\subsection{User}
+\label{subsec:data:base:user}
+
+\begin{center}
+	\begin{tabular}{| p{2cm} | p{2cm} | p{7cm} |}
+		\hline
+	
+		\textbf{Name} & \textbf{Type} & \textbf{Description} \\ \hline
+		
+		id & string & A unique identifier for each user. \\ \hline
+		can\_leech & boolean & Whether the user is allowed to leech or not. \\ \hline
+		torrent\_pass & string & The user's unique announce key. \\ \hline
+	\end{tabular}
+\end{center}
+
+\subsection{Torrent}
+
+\begin{center}
+	\begin{tabular}{| p{2cm} | p{2cm} | p{7cm} |}
+		\hline
+	
+		\textbf{Name} & \textbf{Type} & \textbf{Description} \\ \hline
+		
+		id & string & A unique identifier for each user. \\ \hline
+		info\_hash & string & The info hash of the torrent. \\ \hline
+		snatched & uint32 & The amount of snatches. \\ \hline
+	\end{tabular}
+\end{center}
+
+\subsection{Whitelist Client}
+
+\begin{center}
+	\begin{tabular}{| p{2cm} | p{2cm} | p{7cm} |}
+		\hline
+	
+		\textbf{Name} & \textbf{Type} & \textbf{Description} \\ \hline
+		
+		client & string & The peer\_id the client sends. \\ \hline
+	\end{tabular}
+\end{center}
+
 \chapter{Site Resources}
 
 \section{Overview}
@@ -147,17 +192,23 @@ Fetch a list of users.
 
 If no parameters are given, all users must be returned. \\
 
-\begin{tabular}{| r | p{5cm} |}
-	\hline
+\begin{center}
+	\begin{tabular}{| r | p{8cm} |}
+		\hline
 	
-	\textbf{Parameter} & \textbf{Description} \\ \hline
+		\textbf{Parameter} & \textbf{Description} \\ \hline
 	
-	last\_updated\_after & When this parameter is passed, only users updated after the given UNIX timestamp in UTC should be returned. \\ \hline
+		last\_updated\_after & When this parameter is passed, only users updated after the given UNIX timestamp in UTC should be returned. \\ \hline
 	
-	limit & When this parameter is passed, only the first \textit{value} users should be returned. No order is guaranteed.  \\ \hline
+		limit & When this parameter is passed, only the first \textit{value} users should be returned. No order is guaranteed.  \\ \hline
 	
-	skip & When this parameter is passed, the first \textit{value} users should be ignored, returning only users following the first \textit{value} users. No order is guaranteed. \\ \hline
-\end{tabular}
+		skip & When this parameter is passed, the first \textit{value} users should be ignored, returning only users following the first \textit{value} users. No order is guaranteed. \\ \hline
+	\end{tabular}
+\end{center}
+
+\paragraph{Data Returned}
+
+An array of User objects (see \S\ref{subsec:data:base:user})
 
 \subsubsection{POST}
 
